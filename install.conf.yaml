@@ -1,0 +1,16 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ["~"]
+
+- link:
+    #    ~/.vim: vim
+    #  ~/.vimrc: vimrc
+    ~/.config/nvim: nvim
+
+- create:
+    - ~/.vim/undo-history
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
