@@ -8,6 +8,7 @@
     #    ~/.vim: vim
     #  ~/.vimrc: vimrc
     ~/.config/nvim: nvim
+    ~/.config/lvim: lvim
 
 - create:
     - ~/.vim/undo-history
