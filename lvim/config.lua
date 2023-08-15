@@ -16,6 +16,7 @@ lvim.colorscheme = "lunar"
 -- lvim.use_icons = false
 vim.g.move_key_modifier = 'C'
 vim.g.move_key_modifier_visualmode = 'C'
+vim.g.vimspector_enable_mappings = 'HUMAN'
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -33,11 +34,31 @@ lvim.keys.normal_mode["<leader>lg"] = ":Telescope live_grep<CR>"
 -- override a default keymapping
 -- lvim.keys.normal_mode["<C-q>"] = ":q<cr>" -- or
 vim.keymap.set("i", "jk", "<ESC>")
-vim.keymap.set("n", "rv", ":Lspsaga rename<CR>")
 vim.keymap.set("n", "<ESC>", ":noh<CR>")
-vim.keymap.set("n", "ca", "<cmd>Lspsaga code_action<CR>")
+-- vim.keymap.set("n", "rv", ":Lspsaga rename<CR>")
+-- vim.keymap.set("n", "ca", "<CMD>Lspsaga code_action<CR>")
 vim.keymap.set("n", "xs", "ysiw")
 vim.keymap.set('n', '<leader>pk', ':Telescope package_info<CR>', { silent = true, noremap = true })
+vim.keymap.set('n', '<leader>vc', ':Telescope vimspector configurations<CR>', { silent = true, noremap = true })
+
+vim.keymap.set('n', '<leader>de', ':VimspectorReset<CR>', { silent = true, noremap = true })
+vim.keymap.set('n', '<leader>dc', ':VimspectorContinueCR>', { silent = true, noremap = true })
+vim.keymap.set('n', '<leader>dt', ':VimspectorToggleBreakpoint<CR>', { silent = true, noremap = true })
+vim.keymap.set('n', '<leader>dT', ':VimspectorClearBreakpoints<CR>', { silent = true, noremap = true })
+
+-- Trouble
+lvim.builtin.which_key.mappings["t"] = {
+  name = "Diagnostics",
+  t = { "<cmd>TroubleToggle<cr>", "trouble" },
+  w = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "workspace" },
+  d = { "<cmd>TroubleToggle document_diagnostics<cr>", "document" },
+  q = { "<cmd>TroubleToggle quickfix<cr>", "quickfix" },
+  l = { "<cmd>TroubleToggle loclist<cr>", "loclist" },
+  r = { "<cmd>TroubleToggle lsp_references<cr>", "references" },
+  i = { "<cmd>TroubleToggle lsp_implementations<cr>", "implementations" },
+  e = { "<cmd>TroubleToggle lsp_definitions<cr>", "definitions" },
+  p = { "<cmd>TroubleToggle lsp_type_definitions<cr>", "type definitions" },
+}
 
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = "manual"
@@ -144,12 +165,13 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
 lvim.builtin.treesitter.autotag.enable = true
-lvim.builtin.nvimtree.setup.filters.custom = { "\\.cache" }
+lvim.builtin.nvimtree.setup.filters.custom = { "\\.cache", "Documents.index" }
 
 
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "package_info")
   pcall(telescope.load_extension, "media_files")
+  pcall(telescope.load_extension, "vimspector")
   -- any other extensions loading
 end
 
@@ -230,19 +252,19 @@ formatters.setup {
 
 -- Additional Plugins
 lvim.plugins = {
-  {
-    "jackMort/ChatGPT.nvim",
-    config = function()
-      require("chatgpt").setup({
-        -- optional configuration
-      })
-    end,
-    requires = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim"
-    }
-  },
+  -- {
+  --   "jackMort/ChatGPT.nvim",
+  --   config = function()
+  --     require("chatgpt").setup({
+  --       -- optional configuration
+  --     })
+  --   end,
+  --   requires = {
+  --     "MunifTanjim/nui.nvim",
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-telescope/telescope.nvim"
+  --   }
+  -- },
   {
     "matze/vim-move",
   },
@@ -265,12 +287,16 @@ lvim.plugins = {
     cmd = "Codi",
   },
   {
-    "glepnir/lspsaga.nvim",
-    branch = "main",
+    "iamcco/markdown-preview.nvim",
+    build = "cd app && npm install",
+    ft = "markdown",
     config = function()
-      require("lspsaga").setup({})
+      vim.g.mkdp_auto_start = 1
     end,
-    requires = { { "nvim-tree/nvim-web-devicons" } }
+  },
+  {
+    "folke/trouble.nvim",
+    cmd = "TroubleToggle",
   },
   {
     "norcalli/nvim-colorizer.lua",
@@ -307,7 +333,11 @@ lvim.plugins = {
   },
   {
     'Exafunction/codeium.vim'
-  }
+  },
+  {
+    'nvim-telescope/telescope-vimspector.nvim'
+  },
+  { 'puremourning/vimspector' }
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
