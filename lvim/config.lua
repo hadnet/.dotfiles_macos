@@ -35,10 +35,11 @@ lvim.keys.normal_mode["<leader>lg"] = ":Telescope live_grep<CR>"
 -- lvim.keys.normal_mode["<C-q>"] = ":q<cr>" -- or
 vim.keymap.set("i", "jk", "<ESC>")
 vim.keymap.set("n", "<ESC>", ":noh<CR>")
--- vim.keymap.set("n", "rv", ":Lspsaga rename<CR>")
--- vim.keymap.set("n", "ca", "<CMD>Lspsaga code_action<CR>")
+vim.keymap.set("n", "rv", ":Lspsaga rename<CR>")
+vim.keymap.set("n", "ca", "<cmd>Lspsaga code_action<CR>")
 vim.keymap.set("n", "xs", "ysiw")
 vim.keymap.set('n', '<leader>pk', ':Telescope package_info<CR>', { silent = true, noremap = true })
+vim.keymap.set('n', '<leader>pm', ':Telescope media_files<CR>', { silent = true, noremap = true })
 vim.keymap.set('n', '<leader>vc', ':Telescope vimspector configurations<CR>', { silent = true, noremap = true })
 
 vim.keymap.set('n', '<leader>de', ':VimspectorReset<CR>', { silent = true, noremap = true })
@@ -64,11 +65,12 @@ vim.opt.foldlevel = 99
 vim.opt.foldmethod = "manual"
 -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = true
+vim.opt.wrap = true
 
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 -- we use protected-mode (pcall) just in case the plugin wasn't loaded yet.
 -- local _, actions = pcall(require, "telescope.actions")
-lvim.builtin.telescope.pickers.find_files.previewer = nil
+lvim.builtin.telescope.pickers.find_files.previewer = true
 lvim.builtin.telescope.defaults.preview = {
   mime_hook = function(filepath, bufnr, opts)
     local is_image = function(filepath)
@@ -215,6 +217,9 @@ end
 --   --Enable completion triggered by <c-x><c-o>
 --   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
 -- end
+require("luasnip/loaders/from_vscode").load { paths = { "~/.config/lvim/snippets/vscode-es7-javascript-react-snippets" } }
+
+require("lvim.lsp.manager").setup "tailwindcss"
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
@@ -299,13 +304,20 @@ lvim.plugins = {
     cmd = "TroubleToggle",
   },
   {
+    'nvimdev/lspsaga.nvim',
+    after = 'nvim-lspconfig',
+    config = function()
+      require('lspsaga').setup({})
+    end,
+  },
+  {
     "norcalli/nvim-colorizer.lua",
     config = function()
       require("colorizer").setup({
-        'css';
-        'javascript';
-        'typescript';
-        html = { mode = 'background' };
+        'css',
+        'javascript',
+        'typescript',
+        html = { mode = 'background' },
       })
     end,
   },
@@ -325,6 +337,16 @@ lvim.plugins = {
     setup = function()
       vim.o.timeoutlen = 900
     end
+  },
+  {
+    'laytan/tailwind-sorter.nvim',
+    requires = { 'nvim-treesitter/nvim-treesitter', 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('tailwind-sorter').setup({
+        on_save_enabled = true
+      })
+    end,
+    build = 'cd formatter && npm i && npm run build',
   },
   {
     'HendrikPetertje/telescope-media-files.nvim',
