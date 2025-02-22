@@ -20,9 +20,13 @@ return {
     cmd = "IncRename",
     config = true,
   },
+  { "wakatime/vim-wakatime", lazy = false },
   {
     "Exafunction/codeium.vim",
     event = "BufEnter",
+    config = function()
+      vim.g.codeium_os = "Darwin"
+    end,
   },
 
   -- Refactoring tool
