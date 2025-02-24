@@ -82,6 +82,8 @@ return {
         -- separator_style = "slant",
         show_buffer_close_icons = false,
         show_close_icon = false,
+        always_show_bufferline = true, -- keep bufferline visible
+        show_duplicate_prefix = true,
         name_formatter = function(buf)
           local filename = vim.fn.fnamemodify(buf.name, ":t")
           if filename == "index.tsx" or filename == "page.tsx" then
